@@ -2,42 +2,41 @@ pipeline{
     agent any
     tools{
         nodejs 'Node-18'
+        docker 'Docker'
     }
     environment {
         MONGODB_URI = credentials('mongo-db')
+        DOCKER_IMAGE_NAME = 'app-gallery'
+        DOCKER_IMAGE_TAG = 'lts'
     }
     stages{
-        stage('Install Node Modules Packages'){
+        stage('Install dependencies'){
             steps{
                 sh 'npm install'
             }
         }
-        stage('Test'){
+        stage('Run application tests'){
             steps{
-                
                 sh 'npm test'
             }
         }
-        stage('Build Docker Image'){
+        stage('Build docker image'){
             steps{
-                echo 'Building docker image....'
+                script {
+                    echo 'Building docker image....'
+                    sh "docker build -t $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG ."
+                }
             }
         }
-        stage('Push to Docker Image Repository'){
-            steps{
-                echo 'deploying the image to docker.....'
-            }
-        }
-        stage('Deploy to Heroku'){
-            steps{
-                echo 'deploying the image to production environment.....'
+        stage('Push image to docker hub'){
+            steps {
+                echo 'Pushing the image to Docker Hub.....'
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+                        docker.image("$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG").push()
+                    }
+                }
             }
         }
     }
-    // post{
-    //     always{
-    //         slackSend channel:'jenkins', color: 'good', message: "Node Gallery Pipeline Message- ${currentBuild.currentResult}  ${env.JOB_NAME} ${env.BUILD_NUMBER} ${BUILD_URL}"
-    //     }
-        
-    // }
 }
