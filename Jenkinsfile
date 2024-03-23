@@ -3,6 +3,9 @@ pipeline{
     tools{
         nodejs 'Node-18'
     }
+    environment {
+        MONGODB_URI = credentials('mongo-db')
+    }
     stages{
         stage('Install Node Modules Packages'){
             steps{
@@ -11,6 +14,7 @@ pipeline{
         }
         stage('Test'){
             steps{
+                
                 sh 'npm test'
             }
         }
