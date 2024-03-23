@@ -2,6 +2,7 @@ pipeline{
     agent any
     tools{
         nodejs 'Node-18'
+        docker 'Docker'
     }
     environment {
         MONGODB_URI = credentials('mongo-db')
