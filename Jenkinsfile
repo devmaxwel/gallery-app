@@ -6,7 +6,7 @@ pipeline{
     environment {
         MONGODB_URI = credentials('mongo-db')
         DOCKER_IMAGE_NAME = 'app-gallery'
-        DOCKER_IMAGE_TAG = 'lts'
+        DOCKER_IMAGE_TAG = '1.0.0'
     }
     stages{
         stage('Install dependencies'){
@@ -14,11 +14,13 @@ pipeline{
                 sh 'npm install'
             }
         }
+
         stage('Run application tests'){
             steps{
                 sh 'npm test'
             }
         }
+
         stage('Build docker image'){
             steps{
                 script {
@@ -27,6 +29,7 @@ pipeline{
                 }
             }
         }
+
         stage('Push image to docker hub'){
             steps {
                 echo 'Pushing the image to Docker Hub.....'
