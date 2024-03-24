@@ -39,18 +39,18 @@ pipeline{
             }
         }
     }
-    post{
-        always{
-            // irregardles of the post job status
-            // like sendig an email to the dev team
-        }
-        failure{
-            // when a job fais
-        }
-        success{
-            // 
-        }
-    }
+    // post{
+    //     always{
+    //         // irregardles of the post job status
+    //         // like sendig an email to the dev team
+    //     }
+    //     failure{
+    //         // when a job fais
+    //     }
+    //     success{
+    //         // 
+    //     }
+    // }
 }
 
 // stage("build"){
