@@ -14,13 +14,11 @@ pipeline{
                 sh 'npm install'
             }
         }
-
         stage('Run application tests'){
             steps{
                 sh 'npm test'
             }
         }
-
         stage('Build docker image'){
             steps{
                 script {
@@ -29,7 +27,6 @@ pipeline{
                 }
             }
         }
-
         stage('Push image to docker hub'){
             steps {
                 script {
@@ -49,7 +46,7 @@ pipeline{
         }
         failure{
             // when a job fais
-        },
+        }
         success{
             // 
         }
