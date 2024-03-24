@@ -9,16 +9,8 @@ pipeline{
         DOCKER_IMAGE_TAG = '1.0.0'
     }
     stages{
-        stage('Get App version') {
-            steps {
-                script {
-                    APP_VERSION = sh "git describe --tags --abbrev=0"
-                }
-            }
-        }
         stage('Install dependencies'){
             steps{
-                echo "The App version is $GIT_APP_VERSION"
                 sh 'npm install'
             }
         }
