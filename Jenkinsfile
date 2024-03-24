@@ -2,7 +2,6 @@ pipeline{
     agent any
     tools{
         nodejs 'Node-18'
-        // docker 'Docker'
     }
     environment {
         MONGODB_URI = credentials('mongo-db')
@@ -33,13 +32,37 @@ pipeline{
 
         stage('Push image to docker hub'){
             steps {
-                echo 'Pushing the image to Docker Hub.....'
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
-                        docker.image("$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG").push()
+                    echo 'Pushing the image to Docker Hub.....'
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                        sh "echo ${PASSWORD} | docker login -u ${USERNAME} --password-stdin"
+                        sh "docker push $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG"
                     }
                 }
             }
         }
     }
+    post{
+        always{
+            // irregardles of the post job status
+            // like sendig an email to the dev team
+        }
+        failure{
+            // when a job fais
+        },
+        success{
+            // 
+        }
+    }
 }
+
+// stage("build"){
+//     when{
+//         expression{
+//             // the expression
+//         }
+//     }
+//     steps{
+
+//     }
+// }
