@@ -6,11 +6,13 @@ pipeline{
     environment {
         MONGODB_URI = credentials('mongo-db')
         DOCKER_IMAGE_NAME = 'app-gallery'
+        APP_VERSION = sh(script: "git describe --tags --abbrev=0", returnStdout: true).trim()
         DOCKER_IMAGE_TAG = '1.0.0'
     }
     stages{
         stage('Install dependencies'){
             steps{
+                echo "The App version is $APP_VERSION"
                 sh 'npm install'
             }
         }
@@ -19,10 +21,10 @@ pipeline{
                 sh 'npm test'
             }
         }
-        stage('Build && push image to docker hub'){
+        stage('Build && Push image to docker hub'){
             steps {
                 script {
-                    echo 'Pushing the image to Docker Hub.....'
+                    echo 'building and pushing the image to docker hub.....'
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
                         sh "docker build -t $USERNAME/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG ."
                         sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
